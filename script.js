@@ -3,7 +3,7 @@ const CONFIG = {
   whatsapp: "919368055141",                 // country code + number, no "+" or spaces
   email: "sonusingh.in2019@gmail.com",
   instagram: "https://www.instagram.com/pro.task.studio/",
-  // Paste your Google Apps Script Web App URL here (see README). Leave "" to use WhatsApp-only mode.
+  // Paste your Google Apps Script Web App URL here (see README). Orders will NOT work until this is set.
   backendUrl: "https://script.google.com/macros/s/AKfycbzb72a5lgQggGdgweBTOKc-04SaOWqtoo1KJJRP4f8KZHEhV9DLqBZ4iIOfN-HCotDa/exec",
   // Leave price as "" to show "Custom quote", or write e.g. "Starting at ₹199"
   services: [
@@ -124,14 +124,9 @@ async function callBackend(method, payload) {
 }
 
 /* ---------- Order submit ---------- */
-function showModal(id, savedOnline, d) {
+function showModal(id) {
   $("mId").textContent = id;
-  $("mText").textContent = savedOnline
-    ? "Your order is saved. Keep this Order ID to track it. Tap below to confirm on WhatsApp so we can send your quote."
-    : "Tap below to send your order on WhatsApp. We will reply with your quote and timeline.";
-  const text = "*New Order - ProTask Studio*\nOrder ID: " + id + "\nName: " + d.name + "\nPhone: " + d.phone +
-    "\nEmail: " + (d.email || "-") + "\nService: " + d.service + "\nDeadline: " + (d.deadline || "-") + "\nDetails: " + d.details;
-  $("mWa").href = waLink(text);
+  $("mText").textContent = "Your order has been sent to our team. Keep this Order ID to track it. We will contact you on your WhatsApp number soon with the quote and timeline.";
   $("modal").hidden = false; $("mClose").focus();
 }
 $("mClose").addEventListener("click", () => { $("modal").hidden = true; });
@@ -158,22 +153,14 @@ $("orderForm").addEventListener("submit", async (e) => {
   };
   const btn = $("submitBtn"); btn.disabled = true; btn.textContent = "Submitting...";
   try {
-    let id, online = false;
-    if (CONFIG.backendUrl) {
-      try {
-        const r = await callBackend("POST", d);
-        if (r && r.ok) { id = r.id; online = true; }
-        else throw new Error((r && r.error) || "Server error");
-      } catch (err) {
-        id = "PT-" + Date.now().toString(36).toUpperCase().slice(-6);
-        alert("Could not reach the order server. Your order will be sent via WhatsApp instead.");
-      }
-    } else {
-      id = "PT-" + Date.now().toString(36).toUpperCase().slice(-6);
-    }
+    if (!CONFIG.backendUrl) throw new Error("backend-not-configured");
+    const r = await callBackend("POST", d);
+    if (!r || !r.ok) throw new Error((r && r.error) || "Server error");
     store.set("pt-last", Date.now());
-    showModal(id, online, d);
+    showModal(r.id);
     f.reset(); $("charCount").textContent = "0/1500";
+  } catch (err) {
+    alert("Sorry, your order could not be sent right now. Please try again in a minute, or message us on Instagram.");
   } finally { btn.disabled = false; btn.textContent = "Submit Order"; }
 });
 
