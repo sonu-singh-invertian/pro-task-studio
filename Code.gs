@@ -1,8 +1,9 @@
 /**
  * ProTask Studio - Order backend (Google Apps Script)
- * Paste this into Extensions -> Apps Script of a Google Sheet, then Deploy as Web app.
+ * Every new order: saved in the "Orders" sheet + emailed to OWNER_EMAIL automatically.
+ * Paste into Extensions -> Apps Script of a Google Sheet, then Deploy as Web app.
  */
-const OWNER_EMAIL = "sonusingh.in2019@gmail.com";   // you get a new-order email here
+const OWNER_EMAIL = "sonusingh.in2019@gmail.com";   // new-order emails arrive here
 const SHEET_NAME = "Orders";
 const HEADERS = ["Order ID", "Date", "Name", "Phone", "Email", "Service", "Deadline", "Details", "Status", "Internal Notes"];
 const STATUSES = ["Received", "In Progress", "Review", "Delivered"];
@@ -21,14 +22,51 @@ function getSheet_() {
   return sh;
 }
 
-// Stops spreadsheet formula injection and limits length
-function clean_(v, max) {
-  v = String(v == null ? "" : v).trim().slice(0, max);
-  return /^[=+\-@]/.test(v) ? "'" + v : v;
-}
+function trim_(v, max) { return String(v == null ? "" : v).trim().slice(0, max); }
+// Stops spreadsheet formula injection (only used for what goes into the sheet)
+function safe_(v) { return /^[=+\-@]/.test(v) ? "'" + v : v; }
 
 function json_(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
+}
+
+function sendEmails_(o) {
+  const waNum = o.phone.length === 10 ? "91" + o.phone : o.phone;
+  const sheetUrl = SpreadsheetApp.getActiveSpreadsheet().getUrl();
+
+  // 1) Email to you (owner)
+  const ownerBody =
+    "New order received!\n\n" +
+    "Order ID : " + o.id + "\n" +
+    "Name     : " + o.name + "\n" +
+    "Phone    : " + o.phone + "\n" +
+    "Email    : " + (o.email || "-") + "\n" +
+    "Service  : " + o.service + "\n" +
+    "Deadline : " + (o.deadline || "-") + "\n\n" +
+    "Details:\n" + o.details + "\n\n" +
+    "Reply to customer on WhatsApp: https://wa.me/" + waNum + "\n" +
+    "All orders sheet: " + sheetUrl + "\n";
+  const mail = {
+    to: OWNER_EMAIL,
+    subject: "New ProTask order " + o.id + " - " + o.service,
+    body: ownerBody,
+    name: "ProTask Orders"
+  };
+  if (o.email) mail.replyTo = o.email;   // pressing Reply in Gmail writes to the customer
+  MailApp.sendEmail(mail);
+
+  // 2) Confirmation to customer (only if they gave an email)
+  if (o.email) {
+    try {
+      MailApp.sendEmail({
+        to: o.email,
+        subject: "Your ProTask Studio order " + o.id,
+        body: "Hi " + o.name + ",\n\nThanks for booking with ProTask Studio!\n\nOrder ID: " + o.id + "\nService: " + o.service +
+          "\n\nWe will contact you on WhatsApp shortly with the quote and timeline. You can track your order on our website using your Order ID and the last 4 digits of your phone number.\n\n- ProTask Studio",
+        name: "ProTask Studio"
+      });
+    } catch (err) { Logger.log("Customer mail failed: " + err); }
+  }
 }
 
 function doPost(e) {
@@ -38,41 +76,37 @@ function doPost(e) {
     const d = JSON.parse(e.postData.contents);
     if (d._gotcha) return json_({ ok: false, error: "Rejected" });
 
-    const name = clean_(d.name, 80);
-    const phone = String(d.phone || "").replace(/[^\d]/g, "").slice(0, 13);
-    const email = clean_(d.email, 120);
-    const service = clean_(d.service, 60);
-    const deadline = clean_(d.deadline, 12);
-    const details = clean_(d.details, 1500);
-
-    if (name.length < 2 || phone.length < 10 || service.length < 2 || details.length < 10) {
+    const o = {
+      name: trim_(d.name, 80),
+      phone: String(d.phone || "").replace(/[^\d]/g, "").slice(0, 13),
+      email: trim_(d.email, 120),
+      service: trim_(d.service, 60),
+      deadline: trim_(d.deadline, 12),
+      details: trim_(d.details, 1500)
+    };
+    if (o.name.length < 2 || o.phone.length < 10 || o.service.length < 2 || o.details.length < 10) {
       return json_({ ok: false, error: "Missing or invalid fields" });
     }
-    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (o.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(o.email)) {
       return json_({ ok: false, error: "Invalid email" });
     }
 
+    // Save to sheet
     const sh = getSheet_();
-    const id = "PT-" + Utilities.formatString("%04d", sh.getLastRow()); // header row counts as 1
+    o.id = "PT-" + Utilities.formatString("%04d", sh.getLastRow());   // header row counts as 1
     const when = Utilities.formatDate(new Date(), "Asia/Kolkata", "dd MMM yyyy, hh:mm a");
     const row = sh.getLastRow() + 1;
     const range = sh.getRange(row, 1, 1, HEADERS.length);
     range.setNumberFormat("@");
-    range.setValues([[id, when, name, phone, email, service, deadline, details, "Received", ""]]);
+    range.setValues([[o.id, when, safe_(o.name), o.phone, safe_(o.email), safe_(o.service), o.deadline, safe_(o.details), "Received", ""]]);
 
-    try {
-      MailApp.sendEmail(OWNER_EMAIL, "New ProTask order " + id + " - " + service,
-        "Order ID: " + id + "\nName: " + name + "\nPhone: " + phone + "\nEmail: " + (email || "-") +
-        "\nService: " + service + "\nDeadline: " + (deadline || "-") + "\n\nDetails:\n" + details);
-      if (email) {
-        MailApp.sendEmail(email, "Your ProTask Studio order " + id,
-          "Hi " + name + ",\n\nThanks for booking with ProTask Studio!\n\nOrder ID: " + id + "\nService: " + service +
-          "\n\nWe will contact you on WhatsApp shortly with the quote and timeline. You can track your order on our website using your Order ID and the last 4 digits of your phone number.\n\n- ProTask Studio");
-      }
-    } catch (mailErr) { /* order is already saved; ignore mail failures */ }
+    // Email you automatically
+    try { sendEmails_(o); }
+    catch (mailErr) { Logger.log("Owner mail failed for " + o.id + ": " + mailErr); }
 
-    return json_({ ok: true, id: id });
+    return json_({ ok: true, id: o.id });
   } catch (err) {
+    Logger.log("doPost error: " + err);
     return json_({ ok: false, error: "Server error" });
   } finally {
     try { lock.releaseLock(); } catch (x) {}
@@ -99,4 +133,13 @@ function doGet(e) {
   } catch (err) {
     return json_({ ok: false, error: "Server error" });
   }
+}
+
+/** Run this ONCE from the Apps Script editor to test: it creates a test order and emails you. */
+function testOrder() {
+  const e = { postData: { contents: JSON.stringify({
+    name: "Test User", phone: "9999999999", email: "", service: "Websites", deadline: "",
+    details: "This is a test order to check that email delivery works."
+  }) } };
+  Logger.log(doPost(e).getContent());
 }
