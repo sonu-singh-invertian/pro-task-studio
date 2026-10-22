@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ProTask Studio | Resume & Tech Services</title>
+<meta name="description" content="ProTask Studio - Your Academic & Task Partner. Professional resumes, content & articles, websites and college projects.">
+<style>
+  :root{
+    --bg:#070b14; --card:#0f1626; --card2:#141d33; --text:#e8edf7; --muted:#8e9ab3;
+    --blue:#2f8cff; --cyan:#27d3ff; --gold:#e3b660; --border:#1f2b47;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:'Segoe UI',system-ui,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 20px}
+  /* NAV */
+  header{position:sticky;top:0;z-index:50;background:rgba(7,11,20,.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
+  nav{display:flex;align-items:center;justify-content:space-between;height:64px}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.5px}
+  .logo .mark{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;font-weight:800;
+    background:linear-gradient(135deg,var(--blue),var(--cyan));color:#fff;position:relative}
+  .logo .mark::after{content:"";position:absolute;top:-3px;right:-3px;width:10px;height:10px;border-top:3px solid var(--gold);border-right:3px solid var(--gold)}
+  .logo small{display:block;font-size:.6rem;letter-spacing:3px;color:var(--muted);font-weight:500;margin-top:-4px}
+  .links{display:flex;gap:26px;font-size:.95rem;color:var(--muted)}
+  .links a:hover{color:var(--text)}
+  .btn{display:inline-block;padding:12px 26px;border-radius:10px;font-weight:600;border:0;cursor:pointer;font-size:1rem;
+    background:linear-gradient(135deg,var(--blue),var(--cyan));color:#fff;transition:.2s}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(47,140,255,.35)}
+  .btn.ghost{background:transparent;border:1px solid var(--border);color:var(--text)}
+  .btn.ghost:hover{border-color:var(--blue);box-shadow:none}
+  .menu-btn{display:none;background:none;border:0;color:var(--text);font-size:1.6rem;cursor:pointer}
+  /* HERO */
+  .hero{padding:90px 0 70px;text-align:center;background:radial-gradient(circle at 50% 0%,rgba(47,140,255,.18),transparent 60%)}
+  .tag{display:inline-block;padding:6px 16px;border:1px solid var(--border);border-radius:999px;color:var(--gold);font-size:.85rem;margin-bottom:22px}
+  .hero h1{font-size:clamp(2rem,5vw,3.4rem);line-height:1.15;margin-bottom:18px}
+  .grad{background:linear-gradient(135deg,var(--blue),var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero p{max-width:620px;margin:0 auto 30px;color:var(--muted);font-size:1.1rem}
+  .cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+  .stats{display:flex;justify-content:center;gap:50px;margin-top:50px;flex-wrap:wrap}
+  .stats b{display:block;font-size:1.6rem;color:var(--gold)}
+  .stats span{color:var(--muted);font-size:.9rem}
+  /* SECTIONS */
+  section{padding:70px 0}
+  .title{text-align:center;margin-bottom:44px}
+  .title h2{font-size:2rem}
+  .title p{color:var(--muted);margin-top:8px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:22px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;transition:.25s}
+  .card:hover{border-color:var(--blue);transform:translateY(-4px)}
+  .card .ico{font-size:2rem;margin-bottom:12px}
+  .card h3{margin-bottom:8px}
+  .card p{color:var(--muted);font-size:.95rem}
+  .card ul{margin:12px 0 0 18px;color:var(--muted);font-size:.9rem}
+  .steps .num{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-weight:700;margin-bottom:12px;
+    background:linear-gradient(135deg,var(--blue),var(--cyan))}
+  /* FORM */
+  .form-box{max-width:720px;margin:0 auto;background:var(--card);border:1px solid var(--border);border-radius:18px;padding:34px}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  label{display:block;font-size:.88rem;color:var(--muted);margin:14px 0 6px}
+  input,select,textarea{width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--border);background:var(--card2);color:var(--text);font:inherit}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue)}
+  textarea{min-height:110px;resize:vertical}
+  .form-box .btn{width:100%;margin-top:22px}
+  .note{font-size:.82rem;color:var(--muted);margin-top:12px;text-align:center}
+  #msg{margin-top:14px;text-align:center;font-weight:600}
+  .ok{color:#4ade80}.err{color:#f87171}
+  /* FAQ + FOOTER */
+  details{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:12px;max-width:760px;margin-left:auto;margin-right:auto}
+  summary{cursor:pointer;font-weight:600}
+  details p{color:var(--muted);margin-top:10px}
+  footer{border-top:1px solid var(--border);padding:34px 0;text-align:center;color:var(--muted);font-size:.9rem}
+  footer .soc{display:flex;gap:22px;justify-content:center;margin-bottom:14px}
+  footer .soc a:hover{color:var(--cyan)}
+  .wa{position:fixed;right:20px;bottom:20px;width:54px;height:54px;border-radius:50%;background:#25d366;display:grid;place-items:center;font-size:1.6rem;box-shadow:0 6px 20px rgba(0,0,0,.4);z-index:60}
+  @media(max-width:720px){
+    .links{display:none;position:absolute;top:64px;left:0;right:0;background:var(--bg);flex-direction:column;padding:18px 20px;border-bottom:1px solid var(--border)}
+    .links.open{display:flex}
+    .menu-btn{display:block}
+    .row{grid-template-columns:1fr}
+    .nav-cta{display:none}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <nav>
+      <a href="#home" class="logo">
+        <span class="mark">P</span>
+        <span>PROTASK<small>STUDIO</small></span>
+      </a>
+      <div class="links" id="links">
+        <a href="#services">Services</a>
+        <a href="#process">How it works</a>
+        <a href="#order">Book Order</a>
+        <a href="#faq">FAQ</a>
+        <a href="#contact">Contact</a>
+      </div>
+      <a href="#order" class="btn nav-cta" style="padding:9px 20px">Book Now</a>
+      <button class="menu-btn" onclick="document.getElementById('links').classList.toggle('open')" aria-label="Menu">☰</button>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="wrap">
+    <span class="tag">✨ Your Academic &amp; Task Partner</span>
+    <h1>Resumes, Content &amp; <span class="grad">Tech Services</span><br>Done Professionally</h1>
+    <p>ProTask Studio helps students and professionals with ATS-friendly resumes, quality articles, websites and college projects. Your work, our priority.</p>
+    <div class="cta">
+      <a href="#order" class="btn">Book Your Order</a>
+      <a href="#services" class="btn ghost">View Services</a>
+    </div>
+    <div class="stats">
+      <div><b>100%</b><span>Original Work</span></div>
+      <div><b>On-Time</b><span>Delivery</span></div>
+      <div><b>India</b><span>Student Friendly</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="wrap">
+    <div class="title"><h2>Our Services</h2><p>Everything you need, in one studio</p></div>
+    <div class="grid">
+      <div class="card">
+        <div class="ico">📝</div><h3>Professional Resume</h3>
+        <p>ATS-friendly, clean and recruiter-ready resumes for freshers and experienced candidates.</p>
+        <ul><li>Resume / CV design</li><li>Cover letter</li><li>LinkedIn profile tips</li></ul>
+      </div>
+      <div class="card">
+        <div class="ico">✍️</div><h3>Content &amp; Articles</h3>
+        <p>Well-researched, plagiarism-free writing for blogs, websites and academics.</p>
+        <ul><li>Blog &amp; articles</li><li>Website content</li><li>Reports &amp; assignments</li></ul>
+      </div>
+      <div class="card">
+        <div class="ico">💻</div><h3>Websites</h3>
+        <p>Responsive, fast and modern websites for portfolios, businesses and startups.</p>
+        <ul><li>Portfolio websites</li><li>Business landing pages</li><li>Hosting guidance</li></ul>
+      </div>
+      <div class="card">
+        <div class="ico">🎓</div><h3>College Projects</h3>
+        <p>Guidance and development support for final year and mini projects.</p>
+        <ul><li>Web &amp; software projects</li><li>PPT &amp; documentation</li><li>Project reports</li></ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section id="process" style="background:var(--card)">
+  <div class="wrap">
+    <div class="title"><h2>How It Works</h2><p>Simple, transparent and quick</p></div>
+    <div class="grid steps">
+      <div class="card" style="background:var(--bg)"><div class="num">1</div><h3>Book Order</h3><p>Fill the order form with your requirements and deadline.</p></div>
+      <div class="card" style="background:var(--bg)"><div class="num">2</div><h3>Get Quote</h3><p>We contact you on WhatsApp/email with price and timeline.</p></div>
+      <div class="card" style="background:var(--bg)"><div class="num">3</div><h3>We Work</h3><p>Your work is prepared with regular updates.</p></div>
+      <div class="card" style="background:var(--bg)"><div class="num">4</div><h3>Delivery</h3><p>Receive the final files, with revisions if needed.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ORDER FORM -->
+<section id="order">
+  <div class="wrap">
+    <div class="title"><h2>Book Your Order</h2><p>Fill the form and we will get back to you shortly</p></div>
+    <div class="form-box">
+      <form id="orderForm">
+        <div class="row">
+          <div><label>Full Name *</label><input type="text" name="name" required placeholder="Your name"></div>
+          <div><label>WhatsApp Number *</label><input type="tel" name="phone" required pattern="[0-9+ ]{10,15}" placeholder="9XXXXXXXXX"></div>
+        </div>
+        <div class="row">
+          <div><label>Email</label><input type="email" name="email" placeholder="you@example.com"></div>
+          <div><label>Service *</label>
+            <select name="service" required>
+              <option value="">Select a service</option>
+              <option>Professional Resume</option>
+              <option>Cover Letter</option>
+              <option>Content / Article Writing</option>
+              <option>Website Development</option>
+              <option>College Project</option>
+              <option>PPT / Report / Assignment</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+        <label>Deadline</label>
+        <input type="date" name="deadline" id="deadline">
+        <label>Order Details *</label>
+        <textarea name="details" required placeholder="Describe what you need (topic, pages, features, etc.)"></textarea>
+        <!-- honeypot for bots -->
+        <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off">
+        <button type="submit" class="btn" id="submitBtn">Submit Order</button>
+        <div id="msg"></div>
+        <p class="note">Your details are used only to contact you about this order.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" style="background:var(--card)">
+  <div class="wrap">
+    <div class="title"><h2>FAQ</h2></div>
+    <details><summary>How long does a resume take?</summary><p>Usually 1-2 days after you share your details. Urgent delivery can be discussed.</p></details>
+    <details><summary>Is the work original?</summary><p>Yes. All content is written from scratch and checked for originality.</p></details>
+    <details><summary>Can I ask for changes?</summary><p>Yes, reasonable revisions are included so you are fully satisfied.</p></details>
+    <details><summary>How do I pay?</summary><p>Payment details are shared after the quote is confirmed on WhatsApp.</p></details>
+  </div>
+</section>
+
+<!-- CONTACT / FOOTER -->
+<footer id="contact">
+  <div class="wrap">
+    <div class="soc">
+      <a id="igLink" target="_blank" rel="noopener">Instagram</a>
+      <a id="waLink" target="_blank" rel="noopener">WhatsApp</a>
+      <a id="mailLink">Email</a>
+    </div>
+    <p>© <span id="yr"></span> ProTask Studio · Your Work | Our Priority · India</p>
+  </div>
+</footer>
+
+<a class="wa" id="waFloat" target="_blank" rel="noopener" title="Chat on WhatsApp">💬</a>
+
+<script>
+  /* ====== EDIT THIS CONFIG ====== */
+  const CONFIG = {
+    whatsapp: "919368055141",              // country code + number, no + or spaces
+    email: "sonusingh.in2019@gmail.com",
+    instagram: "https://www.instagram.com/pro.task.studio/",
+    // Optional: create a free form at https://formspree.io and paste the endpoint here
+    // e.g. "https://formspree.io/f/xxxxxxx". Leave "" to send orders via WhatsApp only.
+    formspree: ""
+  };
+  /* ============================== */
+
+  const $ = id => document.getElementById(id);
+  $("yr").textContent = new Date().getFullYear();
+  $("igLink").href = CONFIG.instagram;
+  $("waLink").href = $("waFloat").href = "https://wa.me/" + CONFIG.whatsapp + "?text=" + encodeURIComponent("Hi ProTask Studio, I want to know more about your services.");
+  $("mailLink").href = "mailto:" + CONFIG.email;
+  $("deadline").min = new Date().toISOString().split("T")[0];
+  document.querySelectorAll("#links a").forEach(a => a.addEventListener("click", () => $("links").classList.remove("open")));
+
+  $("orderForm").addEventListener("submit", async e => {
+    e.preventDefault();
+    const f = e.target, d = Object.fromEntries(new FormData(f));
+    if (d._gotcha) return;
+    const msg = $("msg"), btn = $("submitBtn");
+    const text =
+      "*New Order - ProTask Studio*\n" +
+      "Name: " + d.name + "\nPhone: " + d.phone + "\nEmail: " + (d.email || "-") +
+      "\nService: " + d.service + "\nDeadline: " + (d.deadline || "-") + "\nDetails: " + d.details;
+
+    btn.disabled = true; btn.textContent = "Submitting...";
+    let saved = false;
+    if (CONFIG.formspree) {
+      try {
+        const r = await fetch(CONFIG.formspree, {method: "POST", headers: {"Accept": "application/json"}, body: new FormData(f)});
+        saved = r.ok;
+      } catch (_) {}
+    }
+    msg.className = "ok";
+    msg.textContent = saved ? "✅ Order received! We will contact you soon. Opening WhatsApp to confirm..." : "✅ Opening WhatsApp to send your order...";
+    window.open("https://wa.me/" + CONFIG.whatsapp + "?text=" + encodeURIComponent(text), "_blank");
+    f.reset();
+    btn.disabled = false; btn.textContent = "Submit Order";
+  });
+</script>
+</body>
+</html>
