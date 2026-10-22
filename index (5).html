@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ProTask Studio | Resume & Tech Services</title>
+<meta name="description" content="ProTask Studio - Your Academic & Task Partner. Professional resumes, content & articles, websites and college projects. Book your order online.">
+<meta property="og:title" content="ProTask Studio | Resume & Tech Services">
+<meta property="og:description" content="Professional resumes, content & articles, websites and college projects. Your work, our priority.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#070b14">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%232f8cff'/%3E%3Ctext x='50' y='70' font-size='62' font-family='Arial' font-weight='700' text-anchor='middle' fill='white'%3EP%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+<script>
+  document.documentElement.classList.add('js');
+  try { var t = localStorage.getItem('pt-theme'); if (t) document.documentElement.setAttribute('data-theme', t); } catch (e) {}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"ProfessionalService","name":"ProTask Studio","description":"Resume, content writing, website and college project services","areaServed":"India","sameAs":["https://www.instagram.com/pro.task.studio/"]}
+</script>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <nav>
+      <a href="#home" class="logo" aria-label="ProTask Studio home">
+        <span class="mark">P</span>
+        <span>PROTASK<small>STUDIO</small></span>
+      </a>
+      <div class="links" id="links">
+        <a href="#services">Services</a>
+        <a href="#why">Why Us</a>
+        <a href="#process">Process</a>
+        <a href="#order">Book Order</a>
+        <a href="#track">Track</a>
+        <a href="#faq">FAQ</a>
+      </div>
+      <div class="nav-right">
+        <button class="icon-btn" id="themeBtn" aria-label="Toggle theme" title="Toggle theme">🌙</button>
+        <a href="#order" class="btn sm nav-cta">Book Now</a>
+        <button class="icon-btn menu-btn" id="menuBtn" aria-label="Menu" aria-expanded="false">☰</button>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="wrap">
+    <span class="tag reveal">✨ Your Academic &amp; Task Partner</span>
+    <h1 class="reveal">Resumes, Content &amp; <span class="grad">Tech Services</span><br>Done Professionally</h1>
+    <p class="reveal">ProTask Studio helps students and professionals with ATS-friendly resumes, quality articles, websites and college projects. Your work, our priority.</p>
+    <div class="cta reveal">
+      <a href="#order" class="btn">Book Your Order</a>
+      <a href="#track" class="btn ghost">Track Order</a>
+    </div>
+    <div class="stats reveal">
+      <div><b data-count="100" data-suffix="%">0</b><span>Original Work</span></div>
+      <div><b>On-Time</b><span>Delivery</span></div>
+      <div><b>Free</b><span>Revisions</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES (rendered from script.js CONFIG) -->
+<section id="services">
+  <div class="wrap">
+    <div class="title reveal"><h2>Our Services</h2><p>Everything you need, in one studio</p></div>
+    <div class="grid" id="servicesGrid"></div>
+  </div>
+</section>
+
+<!-- WHY US -->
+<section id="why" class="alt">
+  <div class="wrap">
+    <div class="title reveal"><h2>Why ProTask Studio?</h2><p>Quality work, student-friendly service</p></div>
+    <div class="grid">
+      <div class="card reveal"><div class="ico">🔒</div><h3>Confidential</h3><p>Your details and files stay private and are used only for your order.</p></div>
+      <div class="card reveal"><div class="ico">⚡</div><h3>Fast Turnaround</h3><p>Realistic deadlines that we actually meet, with urgent options available.</p></div>
+      <div class="card reveal"><div class="ico">🔁</div><h3>Free Revisions</h3><p>Not happy with something? Reasonable changes are on us.</p></div>
+      <div class="card reveal"><div class="ico">💬</div><h3>Direct Support</h3><p>Talk to us directly on WhatsApp or Instagram, no middlemen.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section id="process">
+  <div class="wrap">
+    <div class="title reveal"><h2>How It Works</h2><p>Simple, transparent and quick</p></div>
+    <div class="grid steps">
+      <div class="card reveal"><div class="num">1</div><h3>Book Order</h3><p>Fill the form and get your Order ID instantly.</p></div>
+      <div class="card reveal"><div class="num">2</div><h3>Get Quote</h3><p>We confirm price and timeline on WhatsApp.</p></div>
+      <div class="card reveal"><div class="num">3</div><h3>We Work</h3><p>Track progress anytime with your Order ID.</p></div>
+      <div class="card reveal"><div class="num">4</div><h3>Delivery</h3><p>Receive final files, with revisions if needed.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ORDER FORM -->
+<section id="order" class="alt">
+  <div class="wrap">
+    <div class="title reveal"><h2>Book Your Order</h2><p>Fill the form and we will get back to you shortly</p></div>
+    <div class="form-box reveal">
+      <form id="orderForm" novalidate>
+        <div class="row">
+          <div class="field"><label for="name">Full Name *</label><input id="name" type="text" name="name" required maxlength="80" placeholder="Your name" autocomplete="name"><small class="err-msg"></small></div>
+          <div class="field"><label for="phone">WhatsApp Number *</label><input id="phone" type="tel" name="phone" required inputmode="numeric" maxlength="15" placeholder="9XXXXXXXXX" autocomplete="tel"><small class="err-msg"></small></div>
+        </div>
+        <div class="row">
+          <div class="field"><label for="email">Email (for confirmation)</label><input id="email" type="email" name="email" maxlength="120" placeholder="you@example.com" autocomplete="email"><small class="err-msg"></small></div>
+          <div class="field"><label for="service">Service *</label>
+            <select id="service" name="service" required></select><small class="err-msg"></small>
+          </div>
+        </div>
+        <div class="field"><label for="deadline">Deadline</label><input id="deadline" type="date" name="deadline"></div>
+        <div class="field"><label for="details">Order Details *</label>
+          <textarea id="details" name="details" required maxlength="1500" placeholder="Describe what you need (topic, pages, features, etc.)"></textarea>
+          <div class="counter"><small class="err-msg"></small><span id="charCount">0/1500</span></div>
+        </div>
+        <input type="text" name="_gotcha" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <button type="submit" class="btn block" id="submitBtn">Submit Order</button>
+        <p class="note">Your details are used only to contact you about this order.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- TRACK -->
+<section id="track">
+  <div class="wrap">
+    <div class="title reveal"><h2>Track Your Order</h2><p>Enter your Order ID and the last 4 digits of your phone number</p></div>
+    <div class="form-box reveal">
+      <form id="trackForm" novalidate>
+        <div class="row">
+          <div class="field"><label for="tid">Order ID</label><input id="tid" type="text" placeholder="PT-0001" maxlength="20" autocomplete="off"></div>
+          <div class="field"><label for="tphone">Phone (last 4 digits)</label><input id="tphone" type="text" inputmode="numeric" maxlength="4" placeholder="1234" autocomplete="off"></div>
+        </div>
+        <button type="submit" class="btn block" id="trackBtn">Check Status</button>
+      </form>
+      <div id="trackResult" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" class="alt">
+  <div class="wrap">
+    <div class="title reveal"><h2>FAQ</h2></div>
+    <details class="reveal"><summary>How long does a resume take?</summary><p>Usually 1-2 days after you share your details. Urgent delivery can be discussed.</p></details>
+    <details class="reveal"><summary>Is the work original?</summary><p>Yes. All content is written from scratch and checked for originality.</p></details>
+    <details class="reveal"><summary>Can I ask for changes?</summary><p>Yes, reasonable revisions are included so you are fully satisfied.</p></details>
+    <details class="reveal"><summary>How do I pay?</summary><p>Payment details are shared after the quote is confirmed on WhatsApp.</p></details>
+    <details class="reveal"><summary>How do I track my order?</summary><p>After booking you get an Order ID. Use it with the last 4 digits of your phone in the Track section.</p></details>
+  </div>
+</section>
+
+<footer id="contact">
+  <div class="wrap">
+    <div class="soc">
+      <a id="igLink" target="_blank" rel="noopener">Instagram</a>
+      <a id="waLink" target="_blank" rel="noopener">WhatsApp</a>
+      <a id="mailLink">Email</a>
+    </div>
+    <p>© <span id="yr"></span> ProTask Studio · Your Work | Our Priority · India</p>
+  </div>
+</footer>
+
+<a class="wa" id="waFloat" target="_blank" rel="noopener" title="Chat on WhatsApp" aria-label="Chat on WhatsApp">💬</a>
+
+<!-- SUCCESS MODAL -->
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle" hidden>
+  <div class="modal-box">
+    <div class="check">✅</div>
+    <h3 id="mTitle">Order Received!</h3>
+    <p id="mText"></p>
+    <div class="oid"><span id="mId"></span><button type="button" class="btn sm ghost" id="copyBtn">Copy</button></div>
+    <a class="btn block" id="mWa" target="_blank" rel="noopener">Confirm on WhatsApp</a>
+    <button type="button" class="btn ghost block" id="mClose" style="margin-top:10px">Close</button>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
