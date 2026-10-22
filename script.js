@@ -4,7 +4,7 @@ const CONFIG = {
   email: "sonusingh.in2019@gmail.com",
   instagram: "https://www.instagram.com/pro.task.studio/",
   // Paste your Google Apps Script Web App URL here (see README). Leave "" to use WhatsApp-only mode.
-  backendUrl: "",
+  backendUrl: "https://script.google.com/macros/s/AKfycbzb72a5lgQggGdgweBTOKc-04SaOWqtoo1KJJRP4f8KZHEhV9DLqBZ4iIOfN-HCotDa/exec",
   // Leave price as "" to show "Custom quote", or write e.g. "Starting at ₹199"
   services: [
     { icon: "📝", name: "Professional Resume", desc: "ATS-friendly, clean and recruiter-ready resumes for freshers and experienced candidates.", points: ["Resume / CV design", "Cover letter", "LinkedIn profile tips"], price: "" },
