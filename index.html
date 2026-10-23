@@ -1,5 +1,3 @@
-HTML page
-index (5).html
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
@@ -32,16 +30,17 @@ index (5).html
       </a>
       <div class="links" id="links">
         <a href="#services">Services</a>
-        <a href="#why">Why Us</a>
-        <a href="#process">Process</a>
+        <a href="#samples" id="navSamples" hidden>Samples</a>
+        <a href="#pricing">Pricing</a>
         <a href="#order">Book Order</a>
         <a href="#track">Track</a>
+        <a href="#reviews" id="navReviews" hidden>Reviews</a>
         <a href="#faq">FAQ</a>
       </div>
       <div class="nav-right">
-        <button class="icon-btn" id="themeBtn" aria-label="Toggle theme" title="Toggle theme">ð</button>
+        <button class="icon-btn" id="themeBtn" aria-label="Toggle theme" title="Toggle theme">🌙</button>
         <a href="#order" class="btn sm nav-cta">Book Now</a>
-        <button class="icon-btn menu-btn" id="menuBtn" aria-label="Menu" aria-expanded="false">â°</button>
+        <button class="icon-btn menu-btn" id="menuBtn" aria-label="Menu" aria-expanded="false">☰</button>
       </div>
     </nav>
   </div>
@@ -50,7 +49,7 @@ index (5).html
 <!-- HERO -->
 <section class="hero" id="home">
   <div class="wrap">
-    <span class="tag reveal">â¨ Your Academic &amp; Task Partner</span>
+    <span class="tag reveal">✨ Your Academic &amp; Task Partner</span>
     <h1 class="reveal">Resumes, Content &amp; <span class="grad">Tech Services</span><br>Done Professionally</h1>
     <p class="reveal">ProTask Studio helps students and professionals with ATS-friendly resumes, quality articles, websites and college projects. Your work, our priority.</p>
     <div class="cta reveal">
@@ -73,15 +72,32 @@ index (5).html
   </div>
 </section>
 
+<!-- SAMPLES (shown only if CONFIG.samples has items) -->
+<section id="samples" class="alt" hidden>
+  <div class="wrap">
+    <div class="title reveal"><h2>Our Work</h2><p>A few samples of what we have made</p></div>
+    <div class="grid" id="samplesGrid"></div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="wrap">
+    <div class="title reveal"><h2>Packages</h2><p>Pick a package, then tell us your needs. Final price is confirmed before work starts.</p></div>
+    <div class="tabs" id="priceTabs" role="tablist"></div>
+    <div class="grid" id="priceGrid"></div>
+  </div>
+</section>
+
 <!-- WHY US -->
 <section id="why" class="alt">
   <div class="wrap">
     <div class="title reveal"><h2>Why ProTask Studio?</h2><p>Quality work, student-friendly service</p></div>
     <div class="grid">
-      <div class="card reveal"><div class="ico">ð</div><h3>Confidential</h3><p>Your details and files stay private and are used only for your order.</p></div>
-      <div class="card reveal"><div class="ico">â¡</div><h3>Fast Turnaround</h3><p>Realistic deadlines that we actually meet, with urgent options available.</p></div>
-      <div class="card reveal"><div class="ico">ð</div><h3>Free Revisions</h3><p>Not happy with something? Reasonable changes are on us.</p></div>
-      <div class="card reveal"><div class="ico">ð¬</div><h3>Direct Support</h3><p>Talk to us directly on WhatsApp or Instagram, no middlemen.</p></div>
+      <div class="card reveal"><div class="ico">🔒</div><h3>Confidential</h3><p>Your details and files stay private and are used only for your order.</p></div>
+      <div class="card reveal"><div class="ico">⚡</div><h3>Fast Turnaround</h3><p>Realistic deadlines that we actually meet, with urgent options available.</p></div>
+      <div class="card reveal"><div class="ico">🔁</div><h3>Free Revisions</h3><p>Not happy with something? Reasonable changes are on us.</p></div>
+      <div class="card reveal"><div class="ico">💬</div><h3>Direct Support</h3><p>Talk to us directly on WhatsApp or Instagram, no middlemen.</p></div>
     </div>
   </div>
 </section>
@@ -145,6 +161,51 @@ index (5).html
   </div>
 </section>
 
+<!-- PAY (shown only if CONFIG.upi.id is set) -->
+<section id="pay" class="alt" hidden>
+  <div class="wrap">
+    <div class="title reveal"><h2>Pay for Your Order</h2><p>Pay only after we have confirmed your quote</p></div>
+    <div class="form-box reveal">
+      <form id="payForm" novalidate>
+        <div class="row">
+          <div class="field"><label for="payId">Order ID</label><input id="payId" type="text" placeholder="PT-0001" maxlength="12" autocomplete="off"></div>
+          <div class="field"><label for="payAmt">Amount in ₹ (as per your confirmed quote)</label><input id="payAmt" type="number" min="1" max="100000" step="1" inputmode="numeric" placeholder="e.g. 299"></div>
+        </div>
+        <button type="submit" class="btn block">Show Payment QR</button>
+      </form>
+      <div id="payOut" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS (shown only when the backend is set up) -->
+<section id="reviews" hidden>
+  <div class="wrap">
+    <div class="title reveal"><h2>Customer Reviews</h2><p>Only verified reviews from delivered orders</p></div>
+    <div class="grid" id="reviewsList"></div>
+    <div class="form-box reveal" style="margin-top:40px">
+      <h3 style="margin-bottom:4px">Got your delivery? Leave a review</h3>
+      <p class="note" style="text-align:left;margin-top:0">Reviews can be added only for orders marked Delivered. We publish them after approval.</p>
+      <form id="reviewForm" novalidate>
+        <div class="row">
+          <div class="field"><label for="rid">Order ID</label><input id="rid" type="text" placeholder="PT-0001" maxlength="12" autocomplete="off"></div>
+          <div class="field"><label for="rp4">Phone (last 4 digits)</label><input id="rp4" type="text" inputmode="numeric" maxlength="4" placeholder="1234" autocomplete="off"></div>
+        </div>
+        <div class="row">
+          <div class="field"><label for="rname">Your name (shown publicly)</label><input id="rname" type="text" maxlength="40" placeholder="e.g. Rahul"></div>
+          <div class="field"><label for="rrating">Rating</label>
+            <select id="rrating"><option value="5">★★★★★ (5)</option><option value="4">★★★★☆ (4)</option><option value="3">★★★☆☆ (3)</option><option value="2">★★☆☆☆ (2)</option><option value="1">★☆☆☆☆ (1)</option></select>
+          </div>
+        </div>
+        <div class="field"><label for="rtext">Your review</label><textarea id="rtext" maxlength="500" placeholder="How was your experience?"></textarea></div>
+        <input type="text" id="rgotcha" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <button type="submit" class="btn block" id="rBtn">Submit Review</button>
+        <div id="rMsg" aria-live="polite" style="margin-top:12px;text-align:center"></div>
+      </form>
+    </div>
+  </div>
+</section>
+
 <!-- FAQ -->
 <section id="faq" class="alt">
   <div class="wrap">
@@ -164,24 +225,24 @@ index (5).html
       <a id="waLink" target="_blank" rel="noopener">WhatsApp</a>
       <a id="mailLink">Email</a>
     </div>
-    <p>Â© <span id="yr"></span> ProTask Studio Â· Your Work | Our Priority Â· India</p>
+    <p>© <span id="yr"></span> ProTask Studio · Your Work | Our Priority · India</p>
   </div>
 </footer>
 
-<a class="wa" id="waFloat" target="_blank" rel="noopener" title="Chat on WhatsApp" aria-label="Chat on WhatsApp">ð¬</a>
+<a class="wa" id="waFloat" target="_blank" rel="noopener" title="Chat on WhatsApp" aria-label="Chat on WhatsApp">💬</a>
 
 <!-- SUCCESS MODAL -->
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle" hidden>
   <div class="modal-box">
-    <div class="check">â</div>
+    <div class="check">✅</div>
     <h3 id="mTitle">Order Received!</h3>
     <p id="mText"></p>
     <div class="oid"><span id="mId"></span><button type="button" class="btn sm ghost" id="copyBtn">Copy</button></div>
-    <a class="btn block" id="mWa" target="_blank" rel="noopener">Confirm on WhatsApp</a>
-    <button type="button" class="btn ghost block" id="mClose" style="margin-top:10px">Close</button>
+    <button type="button" class="btn block" id="mClose">Done</button>
   </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
 <script src="script.js"></script>
 </body>
 </html>
