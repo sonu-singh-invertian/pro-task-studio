@@ -75,6 +75,7 @@ function doPost(e) {
     lock.waitLock(10000);
     const d = JSON.parse(e.postData.contents);
     if (d._gotcha) return json_({ ok: false, error: "Rejected" });
+    if (d.action === "review") return handleReview_(d);
 
     const o = {
       name: trim_(d.name, 80),
@@ -116,6 +117,7 @@ function doPost(e) {
 function doGet(e) {
   try {
     const p = e.parameter || {};
+    if (p.action === "reviews") return json_({ ok: true, reviews: getApprovedReviews_() });
     if (p.action !== "track") return json_({ ok: true, service: "ProTask orders API" });
     const id = String(p.id || "").trim().toUpperCase();
     const p4 = String(p.p4 || "").replace(/[^\d]/g, "");
@@ -133,6 +135,80 @@ function doGet(e) {
   } catch (err) {
     return json_({ ok: false, error: "Server error" });
   }
+}
+
+/* ================= Reviews ================= */
+const REVIEW_SHEET = "Reviews";
+const REVIEW_HEADERS = ["Date", "Order ID", "Name", "Service", "Rating", "Review", "Approved"];
+
+function getReviewSheet_() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sh = ss.getSheetByName(REVIEW_SHEET);
+  if (!sh) {
+    sh = ss.insertSheet(REVIEW_SHEET);
+    sh.appendRow(REVIEW_HEADERS);
+    sh.setFrozenRows(1);
+    sh.getRange(1, 1, 1, REVIEW_HEADERS.length).setFontWeight("bold");
+    const rule = SpreadsheetApp.newDataValidation().requireValueInList(["No", "Yes"], true).build();
+    sh.getRange(2, 7, 1000, 1).setDataValidation(rule);
+  }
+  return sh;
+}
+
+// A review is accepted only for a Delivered order, with matching phone digits, once per order.
+// It stays hidden until you set Approved = Yes in the Reviews sheet.
+function handleReview_(d) {
+  const id = trim_(d.id, 20).toUpperCase();
+  const p4 = String(d.p4 || "").replace(/[^\d]/g, "").slice(0, 4);
+  const name = trim_(d.name, 40);
+  const text = trim_(d.text, 500);
+  const rating = parseInt(d.rating, 10);
+  if (name.length < 2 || text.length < 10 || !(rating >= 1 && rating <= 5) || p4.length !== 4) {
+    return json_({ ok: false, error: "Please fill all fields correctly." });
+  }
+
+  const orders = getSheet_().getDataRange().getValues();
+  let order = null;
+  for (let i = 1; i < orders.length; i++) {
+    if (String(orders[i][0]).toUpperCase() === id && String(orders[i][3]).slice(-4) === p4) { order = orders[i]; break; }
+  }
+  if (!order) return json_({ ok: false, error: "Order not found. Check your Order ID and phone digits." });
+  if (String(order[8]) !== "Delivered") return json_({ ok: false, error: "Reviews open after your order is delivered." });
+
+  const rs = getReviewSheet_();
+  const existing = rs.getDataRange().getValues();
+  for (let i = 1; i < existing.length; i++) {
+    if (String(existing[i][1]).toUpperCase() === id) return json_({ ok: false, error: "You have already reviewed this order. Thank you!" });
+  }
+
+  const when = Utilities.formatDate(new Date(), "Asia/Kolkata", "dd MMM yyyy");
+  const row = rs.getLastRow() + 1;
+  const range = rs.getRange(row, 1, 1, REVIEW_HEADERS.length);
+  range.setNumberFormat("@");
+  range.setValues([[when, id, safe_(name), String(order[5]), String(rating), safe_(text), "No"]]);
+
+  try {
+    MailApp.sendEmail({
+      to: OWNER_EMAIL,
+      subject: "New review awaiting approval - " + id,
+      body: "Order " + id + " (" + order[5] + ")\nRating: " + rating + "/5\nName: " + name + "\n\n" + text +
+        "\n\nTo publish: open the Reviews sheet and set Approved = Yes.\n" + SpreadsheetApp.getActiveSpreadsheet().getUrl()
+    });
+  } catch (err) { Logger.log("Review mail failed: " + err); }
+  return json_({ ok: true });
+}
+
+function getApprovedReviews_() {
+  const sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(REVIEW_SHEET);
+  if (!sh) return [];
+  const v = sh.getDataRange().getValues();
+  const out = [];
+  for (let i = v.length - 1; i >= 1 && out.length < 12; i--) {   // newest first
+    if (String(v[i][6]).toLowerCase() === "yes") {
+      out.push({ name: String(v[i][2]), service: String(v[i][3]), rating: parseInt(v[i][4], 10) || 5, text: String(v[i][5]), date: String(v[i][0]) });
+    }
+  }
+  return out;
 }
 
 /** Run this ONCE from the Apps Script editor to test: it creates a test order and emails you. */
