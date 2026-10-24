@@ -4,7 +4,7 @@ const CONFIG = {
   email: "sonusingh.in2019@gmail.com",
   instagram: "https://www.instagram.com/pro.task.studio/",
   // Paste your Google Apps Script Web App URL here (see README). Orders will NOT work until this is set.
-  backendUrl: "https://script.google.com/macros/s/AKfycbyL37w-4c05d1PRnkVk6RJP1Q7YzfaxN9V26qAdduzP2gpAjmvAD9E3ktE8r79Ptx7W/exec",
+  backendUrl: "https://script.google.com/macros/s/AKfycbz4Tqra5eoCL03mN86iUv-Ekyn2ETcQfW3FrCCTlSwwbXJ3nu658S03AUxWZ_NSWq-G/exec",
   // Leave price as "" to show "Custom quote", or write e.g. "Starting at ₹199"
   services: [
     { icon: "📝", name: "Professional Resume", desc: "ATS-friendly, clean and recruiter-ready resumes for freshers and experienced candidates.", points: ["Resume / CV design", "Cover letter", "LinkedIn profile tips"], price: "" },
@@ -273,58 +273,5 @@ $("orderForm").addEventListener("submit", async (e) => {
       </div>`;
     if (window.QRCode) new QRCode($("qr"), { text: link, width: 200, height: 200 });
     else $("qr").remove();
-  });
-})();
-
-/* ================= Reviews ================= */
-(function () {
-  if (!CONFIG.backendUrl) return;            // reviews need the backend
-  $("reviews").hidden = false; $("navReviews").hidden = false;
-  const list = $("reviewsList");
-
-  $("rservice").innerHTML = CONFIG.services.map((s) => s.name).concat(CONFIG.extraOptions)
-    .map((n) => `<option>${esc(n)}</option>`).join("");
-
-  (async function load() {
-    try {
-      const r = await callBackend("GET", { action: "reviews" });
-      const rows = (r && r.ok && r.reviews) || [];
-      list.innerHTML = rows.length ? rows.map((v) => `
-        <div class="card review reveal in">
-          <div class="stars" aria-label="${esc(v.rating)} out of 5">${"★".repeat(v.rating)}${"☆".repeat(5 - v.rating)}</div>
-          <p>${esc(v.text)}</p>
-          <small><b>${esc(v.name)}</b> · ${esc(v.service)}</small>
-        </div>`).join("")
-        : '<p class="note" style="grid-column:1/-1">No reviews yet. Be the first to share your experience!</p>';
-    } catch (e) {
-      list.innerHTML = "";
-    }
-  })();
-
-  $("reviewForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const msg = $("rMsg"), btn = $("rBtn");
-    if ($("rgotcha").value) return;
-    const d = {
-      action: "review", name: $("rname").value.trim(), service: $("rservice").value,
-      rating: $("rrating").value, text: $("rtext").value.trim(), _gotcha: ""
-    };
-    if (d.name.length < 2 || d.text.length < 10) {
-      msg.style.color = "var(--bad)"; msg.textContent = "Please enter your name and a short description (min 10 characters)."; return;
-    }
-    if (Date.now() - (+store.get("pt-rev") || 0) < 60000) { msg.style.color = "var(--bad)"; msg.textContent = "Please wait a minute before sending another review."; return; }
-    btn.disabled = true; btn.textContent = "Submitting...";
-    try {
-      const r = await callBackend("POST", d);
-      if (r && r.ok) {
-        store.set("pt-rev", Date.now());
-        msg.style.color = "var(--ok)"; msg.textContent = "Thank you! Your review will appear after we check it.";
-        e.target.reset();
-      } else {
-        msg.style.color = "var(--bad)"; msg.textContent = (r && r.error) || "Could not submit review.";
-      }
-    } catch (err) {
-      msg.style.color = "var(--bad)"; msg.textContent = "Could not submit right now. Please try again.";
-    } finally { btn.disabled = false; btn.textContent = "Submit Review"; }
   });
 })();
