@@ -160,7 +160,7 @@ async function callBackend(method, payload) {
 /* ---------- Order submit ---------- */
 function showModal(id) {
   $("mId").textContent = id;
-  $("mText").textContent = "Your order has been sent to our team. Keep this Order ID to track it. We will contact you on your WhatsApp number soon with the quote and timeline.";
+  $("mText").textContent = "Your order has been sent to our team. Keep this Order ID for reference. We will contact you on your WhatsApp number soon with the quote and timeline.";
   $("modal").hidden = false; $("mClose").focus();
 }
 $("mClose").addEventListener("click", () => { $("modal").hidden = true; });
@@ -196,31 +196,6 @@ $("orderForm").addEventListener("submit", async (e) => {
   } catch (err) {
     alert("Sorry, your order could not be sent right now. Please try again in a minute, or message us on Instagram.");
   } finally { btn.disabled = false; btn.textContent = "Submit Order"; }
-});
-
-/* ---------- Track order ---------- */
-const STAGES = ["Received", "In Progress", "Review", "Delivered"];
-$("trackForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const out = $("trackResult");
-  const id = $("tid").value.trim().toUpperCase(), p4 = cleanPhone($("tphone").value);
-  if (!id || p4.length !== 4) { out.innerHTML = '<div class="status-box bad">Enter your Order ID and last 4 digits of your phone.</div>'; return; }
-  if (!CONFIG.backendUrl) { out.innerHTML = '<div class="status-box">Online tracking is not enabled yet. Please message us on WhatsApp with your Order ID.</div>'; return; }
-  const btn = $("trackBtn"); btn.disabled = true; btn.textContent = "Checking...";
-  try {
-    const r = await callBackend("GET", { action: "track", id, p4 });
-    if (!r || !r.ok) { out.innerHTML = `<div class="status-box bad">${esc((r && r.error) || "Order not found. Check your details.")}</div>`; return; }
-    const idx = Math.max(0, STAGES.indexOf(r.status));
-    out.innerHTML = `
-      <div class="status-box">
-        <div class="status-head"><div><b>${esc(r.id)}</b><br><small>${esc(r.service)}</small></div><span class="badge">${esc(r.status)}</span></div>
-        <div class="progress">${STAGES.map((_, i) => `<i class="${i <= idx ? "on" : ""}"></i>`).join("")}</div>
-        <div class="progress-labels">${STAGES.map((s) => `<span>${s}</span>`).join("")}</div>
-        <p class="note" style="text-align:left;margin-top:14px">Placed on ${esc(r.date)}</p>
-      </div>`;
-  } catch (err) {
-    out.innerHTML = '<div class="status-box bad">Could not check status right now. Please try again.</div>';
-  } finally { btn.disabled = false; btn.textContent = "Check Status"; }
 });
 
 /* ================= Samples ================= */
@@ -307,6 +282,9 @@ $("trackForm").addEventListener("submit", async (e) => {
   $("reviews").hidden = false; $("navReviews").hidden = false;
   const list = $("reviewsList");
 
+  $("rservice").innerHTML = CONFIG.services.map((s) => s.name).concat(CONFIG.extraOptions)
+    .map((n) => `<option>${esc(n)}</option>`).join("");
+
   (async function load() {
     try {
       const r = await callBackend("GET", { action: "reviews" });
@@ -315,9 +293,9 @@ $("trackForm").addEventListener("submit", async (e) => {
         <div class="card review reveal in">
           <div class="stars" aria-label="${esc(v.rating)} out of 5">${"★".repeat(v.rating)}${"☆".repeat(5 - v.rating)}</div>
           <p>${esc(v.text)}</p>
-          <small><b>${esc(v.name)}</b> · ${esc(v.service)}<span class="verified">✔ Verified order</span></small>
+          <small><b>${esc(v.name)}</b> · ${esc(v.service)}</small>
         </div>`).join("")
-        : '<p class="note" style="grid-column:1/-1">No reviews yet. Verified reviews from delivered orders will appear here.</p>';
+        : '<p class="note" style="grid-column:1/-1">No reviews yet. Be the first to share your experience!</p>';
     } catch (e) {
       list.innerHTML = "";
     }
@@ -328,19 +306,19 @@ $("trackForm").addEventListener("submit", async (e) => {
     const msg = $("rMsg"), btn = $("rBtn");
     if ($("rgotcha").value) return;
     const d = {
-      action: "review", id: $("rid").value.trim().toUpperCase(), p4: cleanPhone($("rp4").value),
-      name: $("rname").value.trim(), rating: $("rrating").value, text: $("rtext").value.trim(), _gotcha: ""
+      action: "review", name: $("rname").value.trim(), service: $("rservice").value,
+      rating: $("rrating").value, text: $("rtext").value.trim(), _gotcha: ""
     };
-    if (!/^PT-\d{4,6}$/.test(d.id) || d.p4.length !== 4 || d.name.length < 2 || d.text.length < 10) {
-      msg.style.color = "var(--bad)"; msg.textContent = "Please fill Order ID, last 4 phone digits, your name and a review (min 10 characters)."; return;
+    if (d.name.length < 2 || d.text.length < 10) {
+      msg.style.color = "var(--bad)"; msg.textContent = "Please enter your name and a short description (min 10 characters)."; return;
     }
-    if (Date.now() - (+store.get("pt-rev") || 0) < 30000) { msg.style.color = "var(--bad)"; msg.textContent = "Please wait a few seconds."; return; }
+    if (Date.now() - (+store.get("pt-rev") || 0) < 60000) { msg.style.color = "var(--bad)"; msg.textContent = "Please wait a minute before sending another review."; return; }
     btn.disabled = true; btn.textContent = "Submitting...";
     try {
       const r = await callBackend("POST", d);
       if (r && r.ok) {
         store.set("pt-rev", Date.now());
-        msg.style.color = "var(--ok)"; msg.textContent = "Thank you! Your review will appear after approval.";
+        msg.style.color = "var(--ok)"; msg.textContent = "Thank you! Your review will appear after we check it.";
         e.target.reset();
       } else {
         msg.style.color = "var(--bad)"; msg.textContent = (r && r.error) || "Could not submit review.";
