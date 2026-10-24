@@ -33,7 +33,6 @@
         <a href="#samples" id="navSamples" hidden>Samples</a>
         <a href="#pricing">Pricing</a>
         <a href="#order">Book Order</a>
-        <a href="#track">Track</a>
         <a href="#reviews" id="navReviews" hidden>Reviews</a>
         <a href="#faq">FAQ</a>
       </div>
@@ -54,7 +53,7 @@
     <p class="reveal">ProTask Studio helps students and professionals with ATS-friendly resumes, quality articles, websites and college projects. Your work, our priority.</p>
     <div class="cta reveal">
       <a href="#order" class="btn">Book Your Order</a>
-      <a href="#track" class="btn ghost">Track Order</a>
+      <a href="#pricing" class="btn ghost">View Packages</a>
     </div>
     <div class="stats reveal">
       <div><b data-count="100" data-suffix="%">0</b><span>Original Work</span></div>
@@ -109,7 +108,7 @@
     <div class="grid steps">
       <div class="card reveal"><div class="num">1</div><h3>Book Order</h3><p>Fill the form and get your Order ID instantly.</p></div>
       <div class="card reveal"><div class="num">2</div><h3>Get Quote</h3><p>We confirm price and timeline on WhatsApp.</p></div>
-      <div class="card reveal"><div class="num">3</div><h3>We Work</h3><p>Track progress anytime with your Order ID.</p></div>
+      <div class="card reveal"><div class="num">3</div><h3>We Work</h3><p>We keep you updated on WhatsApp while your work is in progress.</p></div>
       <div class="card reveal"><div class="num">4</div><h3>Delivery</h3><p>Receive final files, with revisions if needed.</p></div>
     </div>
   </div>
@@ -144,23 +143,6 @@
   </div>
 </section>
 
-<!-- TRACK -->
-<section id="track">
-  <div class="wrap">
-    <div class="title reveal"><h2>Track Your Order</h2><p>Enter your Order ID and the last 4 digits of your phone number</p></div>
-    <div class="form-box reveal">
-      <form id="trackForm" novalidate>
-        <div class="row">
-          <div class="field"><label for="tid">Order ID</label><input id="tid" type="text" placeholder="PT-0001" maxlength="20" autocomplete="off"></div>
-          <div class="field"><label for="tphone">Phone (last 4 digits)</label><input id="tphone" type="text" inputmode="numeric" maxlength="4" placeholder="1234" autocomplete="off"></div>
-        </div>
-        <button type="submit" class="btn block" id="trackBtn">Check Status</button>
-      </form>
-      <div id="trackResult" aria-live="polite"></div>
-    </div>
-  </div>
-</section>
-
 <!-- PAY (shown only if CONFIG.upi.id is set) -->
 <section id="pay" class="alt" hidden>
   <div class="wrap">
@@ -181,23 +163,20 @@
 <!-- REVIEWS (shown only when the backend is set up) -->
 <section id="reviews" hidden>
   <div class="wrap">
-    <div class="title reveal"><h2>Customer Reviews</h2><p>Only verified reviews from delivered orders</p></div>
+    <div class="title reveal"><h2>Customer Reviews</h2><p>What our customers say about ProTask Studio</p></div>
     <div class="grid" id="reviewsList"></div>
     <div class="form-box reveal" style="margin-top:40px">
-      <h3 style="margin-bottom:4px">Got your delivery? Leave a review</h3>
-      <p class="note" style="text-align:left;margin-top:0">Reviews can be added only for orders marked Delivered. We publish them after approval.</p>
+      <h3 style="margin-bottom:4px">Worked with us? Leave a review</h3>
+      <p class="note" style="text-align:left;margin-top:0">Reviews are published after we check them.</p>
       <form id="reviewForm" novalidate>
         <div class="row">
-          <div class="field"><label for="rid">Order ID</label><input id="rid" type="text" placeholder="PT-0001" maxlength="12" autocomplete="off"></div>
-          <div class="field"><label for="rp4">Phone (last 4 digits)</label><input id="rp4" type="text" inputmode="numeric" maxlength="4" placeholder="1234" autocomplete="off"></div>
+          <div class="field"><label for="rname">Your name</label><input id="rname" type="text" maxlength="40" placeholder="e.g. Rahul"></div>
+          <div class="field"><label for="rservice">Work you got done</label><select id="rservice"></select></div>
         </div>
-        <div class="row">
-          <div class="field"><label for="rname">Your name (shown publicly)</label><input id="rname" type="text" maxlength="40" placeholder="e.g. Rahul"></div>
-          <div class="field"><label for="rrating">Rating</label>
-            <select id="rrating"><option value="5">★★★★★ (5)</option><option value="4">★★★★☆ (4)</option><option value="3">★★★☆☆ (3)</option><option value="2">★★☆☆☆ (2)</option><option value="1">★☆☆☆☆ (1)</option></select>
-          </div>
+        <div class="field"><label for="rrating">Rating</label>
+          <select id="rrating"><option value="5">★★★★★ (5)</option><option value="4">★★★★☆ (4)</option><option value="3">★★★☆☆ (3)</option><option value="2">★★☆☆☆ (2)</option><option value="1">★☆☆☆☆ (1)</option></select>
         </div>
-        <div class="field"><label for="rtext">Your review</label><textarea id="rtext" maxlength="500" placeholder="How was your experience?"></textarea></div>
+        <div class="field"><label for="rtext">Description</label><textarea id="rtext" maxlength="500" placeholder="Tell us about your experience"></textarea></div>
         <input type="text" id="rgotcha" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
         <button type="submit" class="btn block" id="rBtn">Submit Review</button>
         <div id="rMsg" aria-live="polite" style="margin-top:12px;text-align:center"></div>
@@ -214,7 +193,6 @@
     <details class="reveal"><summary>Is the work original?</summary><p>Yes. All content is written from scratch and checked for originality.</p></details>
     <details class="reveal"><summary>Can I ask for changes?</summary><p>Yes, reasonable revisions are included so you are fully satisfied.</p></details>
     <details class="reveal"><summary>How do I pay?</summary><p>Payment details are shared after the quote is confirmed on WhatsApp.</p></details>
-    <details class="reveal"><summary>How do I track my order?</summary><p>After booking you get an Order ID. Use it with the last 4 digits of your phone in the Track section.</p></details>
   </div>
 </section>
 
