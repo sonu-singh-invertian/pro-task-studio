@@ -62,7 +62,7 @@ function sendEmails_(o) {
         to: o.email,
         subject: "Your ProTask Studio order " + o.id,
         body: "Hi " + o.name + ",\n\nThanks for booking with ProTask Studio!\n\nOrder ID: " + o.id + "\nService: " + o.service +
-          "\n\nWe will contact you on WhatsApp shortly with the quote and timeline. You can track your order on our website using your Order ID and the last 4 digits of your phone number.\n\n- ProTask Studio",
+          "\n\nWe will contact you on WhatsApp shortly with the quote and timeline.\n\n- ProTask Studio",
         name: "ProTask Studio"
       });
     } catch (err) { Logger.log("Customer mail failed: " + err); }
@@ -118,20 +118,7 @@ function doGet(e) {
   try {
     const p = e.parameter || {};
     if (p.action === "reviews") return json_({ ok: true, reviews: getApprovedReviews_() });
-    if (p.action !== "track") return json_({ ok: true, service: "ProTask orders API" });
-    const id = String(p.id || "").trim().toUpperCase();
-    const p4 = String(p.p4 || "").replace(/[^\d]/g, "");
-    if (!id || p4.length !== 4) return json_({ ok: false, error: "Invalid request" });
-
-    const values = getSheet_().getDataRange().getValues();
-    for (let i = 1; i < values.length; i++) {
-      if (String(values[i][0]).toUpperCase() === id) {
-        const phone = String(values[i][3]);
-        if (phone.slice(-4) !== p4) break; // same message as not found, so IDs can't be probed
-        return json_({ ok: true, id: values[i][0], date: String(values[i][1]), service: values[i][5], status: values[i][8] || "Received" });
-      }
-    }
-    return json_({ ok: false, error: "Order not found. Check your Order ID and phone digits." });
+    return json_({ ok: true, service: "ProTask orders API" });
   } catch (err) {
     return json_({ ok: false, error: "Server error" });
   }
@@ -139,7 +126,7 @@ function doGet(e) {
 
 /* ================= Reviews ================= */
 const REVIEW_SHEET = "Reviews";
-const REVIEW_HEADERS = ["Date", "Order ID", "Name", "Service", "Rating", "Review", "Approved"];
+const REVIEW_HEADERS = ["Date", "Order ID (unused)", "Name", "Service", "Rating", "Review", "Approved"];
 
 function getReviewSheet_() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -155,43 +142,40 @@ function getReviewSheet_() {
   return sh;
 }
 
-// A review is accepted only for a Delivered order, with matching phone digits, once per order.
-// It stays hidden until you set Approved = Yes in the Reviews sheet.
+// Anyone can submit a review (name, work done, rating, description).
+// It stays hidden until YOU set Approved = Yes in the Reviews sheet.
+const REVIEW_SERVICES = ["Professional Resume", "Content & Articles", "Websites", "College Projects", "Cover Letter", "PPT / Report / Assignment", "Other"];
+
 function handleReview_(d) {
-  const id = trim_(d.id, 20).toUpperCase();
-  const p4 = String(d.p4 || "").replace(/[^\d]/g, "").slice(0, 4);
   const name = trim_(d.name, 40);
   const text = trim_(d.text, 500);
+  const service = REVIEW_SERVICES.indexOf(d.service) >= 0 ? d.service : "Other";
   const rating = parseInt(d.rating, 10);
-  if (name.length < 2 || text.length < 10 || !(rating >= 1 && rating <= 5) || p4.length !== 4) {
+  if (name.length < 2 || text.length < 10 || !(rating >= 1 && rating <= 5)) {
     return json_({ ok: false, error: "Please fill all fields correctly." });
   }
 
-  const orders = getSheet_().getDataRange().getValues();
-  let order = null;
-  for (let i = 1; i < orders.length; i++) {
-    if (String(orders[i][0]).toUpperCase() === id && String(orders[i][3]).slice(-4) === p4) { order = orders[i]; break; }
-  }
-  if (!order) return json_({ ok: false, error: "Order not found. Check your Order ID and phone digits." });
-  if (String(order[8]) !== "Delivered") return json_({ ok: false, error: "Reviews open after your order is delivered." });
-
   const rs = getReviewSheet_();
   const existing = rs.getDataRange().getValues();
+  // block exact duplicates and flooding (max 20 reviews waiting for approval)
+  let pending = 0;
   for (let i = 1; i < existing.length; i++) {
-    if (String(existing[i][1]).toUpperCase() === id) return json_({ ok: false, error: "You have already reviewed this order. Thank you!" });
+    if (String(existing[i][5]) === text) return json_({ ok: false, error: "This review was already submitted. Thank you!" });
+    if (String(existing[i][6]).toLowerCase() !== "yes") pending++;
   }
+  if (pending >= 20) return json_({ ok: false, error: "Too many reviews are waiting for approval. Please try again later." });
 
   const when = Utilities.formatDate(new Date(), "Asia/Kolkata", "dd MMM yyyy");
   const row = rs.getLastRow() + 1;
   const range = rs.getRange(row, 1, 1, REVIEW_HEADERS.length);
   range.setNumberFormat("@");
-  range.setValues([[when, id, safe_(name), String(order[5]), String(rating), safe_(text), "No"]]);
+  range.setValues([[when, "-", safe_(name), service, String(rating), safe_(text), "No"]]);
 
   try {
     MailApp.sendEmail({
       to: OWNER_EMAIL,
-      subject: "New review awaiting approval - " + id,
-      body: "Order " + id + " (" + order[5] + ")\nRating: " + rating + "/5\nName: " + name + "\n\n" + text +
+      subject: "New review awaiting approval - " + name,
+      body: "Work: " + service + "\nRating: " + rating + "/5\nName: " + name + "\n\n" + text +
         "\n\nTo publish: open the Reviews sheet and set Approved = Yes.\n" + SpreadsheetApp.getActiveSpreadsheet().getUrl()
     });
   } catch (err) { Logger.log("Review mail failed: " + err); }
